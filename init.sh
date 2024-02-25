@@ -19,6 +19,9 @@ brew upgrade
 # Install all brew applications from Brewfile backup
 
 
+# Setup ASDF
+
+
 
 
 
