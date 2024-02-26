@@ -13,17 +13,35 @@ if [[ -z $(command -v brew) ]]; then
   exit 1
 fi
 
-brew update
-brew bundle install
-brew upgrade
+
+brew update;
+brew bundle install;
+brew upgrade;
 # Install all brew applications from Brewfile backup
 
 
+# Setup fonts
+if [[ -z ls $HOME/Library/Fonts | grep -i power ]]; then
+  echo "No powerline font found"
+  # clone
+  git clone https://github.com/powerline/fonts.git --depth=1
+  # install
+  cd fonts
+  ./install.sh
+  # clean-up a bit
+  cd ..
+  rm -rf fonts
+else 
+  echo "Powerline fonts installed, skipping..."
+fi
+
 # Setup ASDF
 
+# Stow folders and apply all configs
 STOW_FOLDERS="nvim tmux zsh"
 for folder in $STOW_FOLDERS
 do
+  echo "Stowing $folder"
   stow --adopt $folder
 done
 
