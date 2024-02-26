@@ -1,10 +1,8 @@
 #!/bin/bash
 export PATH="/usr/local/opt/ruby/bin:$PATH"
-# If you come from bash you might have to change your $PATH.
-export PATH=$HOME/bin:/usr/local/bin:$PATH:/Users/brunocangussu/.mint/bin
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/brunocangussu/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -223,7 +221,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/brunocangussu/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/brunocangussu/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '$HOME/google-cloud-sdk/path.zsh.inc' ]; then . '$HOME/google-cloud-sdk/path.zsh.inc'; fi
 
 alias vim=nvim
 
@@ -232,7 +230,7 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/Users/brunocangussu/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
