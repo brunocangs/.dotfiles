@@ -24,8 +24,9 @@ brew upgrade
 STOW_FOLDERS="nvim tmux zsh"
 for folder in $STOW_FOLDERS
 do
-  stow $folder
+  stow --adopt $folder
 done
 
+git restore .
 
 
