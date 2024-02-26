@@ -21,7 +21,11 @@ brew upgrade
 
 # Setup ASDF
 
-
+STOW_FOLDERS="nvim tmux zsh"
+for folder in $STOW_FOLDERS
+do
+  stow $folder
+done
 
 
 
