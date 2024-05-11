@@ -44,7 +44,11 @@ do
   echo "Stowing $folder"
   stow --adopt $folder
 done
-
+# This will make it so the target folder gets overriden even if it exists
+# It will adopt, which will pull changes
+# And then revert them, making them our changes
+#
+# Get owned
 git restore .
 
 
