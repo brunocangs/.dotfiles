@@ -1,5 +1,7 @@
 #!/bin/bash
 export PATH="/usr/local/opt/ruby/bin:$PATH"
+# If you come from bash you might have to change your $PATH.
+export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/.mint/bin
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -86,53 +88,45 @@ bp () {
 
 
 pm() {
-    MOVED=$(expr "$(git rev-parse --show-toplevel)" != "$(pwd)")
-    cd $(git rev-parse --show-toplevel) > /dev/null
-    {
-        if [ -f yarn.lock ]; then
-            yarn "$@"
-        elif [ -f pnpm-lock.yaml ]; then
-            pnpm "$@"
-        elif [ -f package-lock.json ]; then
-            npm "$@"
-        elif [ -f pnpm-lock.yaml ]; then
-            pnpm "$@"
-        fi
-
-        if [[ $MOVED -eq 1 ]]; then
-        cd - > /dev/null
-        fi
-    } || {
-        if [[ $moved -eq 1 ]]; then
-        cd - > /dev/null
-        fi
-    }
-
+    cd $(git rev-parse --show-toplevel) &> /dev/null
+    MANAGER="pnpm"
+    if [ -f yarn.lock ]; then
+        MANAGER="yarn"
+    elif [ -f pnpm-lock.yaml ]; then
+        MANAGER="pnpm"
+    elif [ -f package-lock.json ]; then
+        MANAGER="npm"
+    elif [ -f pnpm-lock.yaml ]; then
+        MANAGER="pnpm"
+    fi
+    cd - &> /dev/null
+    $MANAGER "$@"
 }
 
 dpm() {
-    MOVED=$(expr "$(git rev-parse --show-toplevel)" != "$(pwd)")
-    cd $(git rev-parse --show-toplevel) > /dev/null
-    {
-        if [ -f yarn.lock ]; then
-            doppler run -- yarn "$@"
-        elif [ -f pnpm-lock.yaml ]; then
-            doppler run -- pnpm "$@"
-        elif [ -f package-lock.json ]; then
-            doppler run -- npm "$@"
-        elif [ -f pnpm-lock.yaml ]; then
-            doppler run -- pnpm "$@"
-        fi
-    } || {
-        if [[ $moved -eq 1 ]]; then
-            cd - > /dev/null
-        fi
-    }
+    cd $(git rev-parse --show-toplevel) &> /dev/null
+    MANAGER="pnpm"
+    if [ -f yarn.lock ]; then
+        MANAGER="yarn"
+    elif [ -f pnpm-lock.yaml ]; then
+        MANAGER="pnpm"
+    elif [ -f package-lock.json ]; then
+        MANAGER="npm"
+    elif [ -f pnpm-lock.yaml ]; then
+        MANAGER="pnpm"
+    fi
+    cd - &> /dev/null
+    doppler run -- $MANAGER "$@"
 }
 
+cd_git_root () {
+    cd $(git rev-parse --show-toplevel) > /dev/null
+}
+alias gr="cd_git_root"
+
 vimc () {
-  cd ~/.config/nvim
-  nvim .
+    cd ~/.config/nvim
+    nvim .
 }
 
 v () {
@@ -141,13 +135,22 @@ v () {
 
 cdp () {
     selected=$(find ~/Projects ~/Study -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    [[ -z $selected ]] && return
     cd $selected
 }
 
 vp () {
     selected=$(find ~/Projects ~/Study -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    [[ -z $selected ]] && return
     cd $selected
     nvim .
+}
+
+dcup () {
+    selected=$(find ~/ProjectsDocker -mindepth 1 -maxdepth 1 -not \( -name volumes -o -name \.git \) -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    [[ -z $selected ]] && return
+    cd $selected
+    docker-compose up
 }
 
 shad() {
@@ -156,12 +159,21 @@ shad() {
 
 docs() {
     selected=$(find ~/Documents -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    [[ -z $selected ]] && return
     open $selected
 }
 
 llm() {
-  ollama run mistral
+    ollama run mistral
 }
+
+# vimdiff() {
+#     [[ $# -lt 1 ]] && echo "Usage: vimdiff <branch>" && return
+#     for file in $(git diff --name-only $1); do
+#         nvim -c "Gdiffsplit $1" $file;
+#     done
+# }
+
 alias ggraph="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all"
 # Set the base directory for Chrome profiles
 CHROME_PROFILES_DIR=~/Library/Application\ Support/Google/Chrome
@@ -169,24 +181,24 @@ CHROME_PROFILES_DIR=~/Library/Application\ Support/Google/Chrome
 # This took way, way too long. At least it works
 # Define a function to find and print Chrome profile names using fuzzy matching
 chrome() {
-  # Use find to locate directories starting with 'Profile' under the given base directory
-  # print0 will use null character as delimiter instead of spaces or line breaks
-  PROFILES=$(find "$CHROME_PROFILES_DIR" -type d \( -name "Profile*" -o -name "Default*" \) -mindepth 1 -maxdepth 1 -print0)
-  # echo -n $PROFILES \
-  #     | xargs -r -0 -I {} basename "{}"
-  # -r will skip the initial empty line, or something like that. Will avoid 1 empty result
-  # -0 will make it work with -print0
-  # -I will replace {} in the string with the current parameter
-  # will run fzf, split the string on the : character, and print the second part, which will not include :
-  # Will split in the :, and return the first part. In this case it's the profile folder we need
-  PROFILE=$(echo -n $PROFILES \
-  | xargs -r -0 -I {} bash -c 'echo "$(basename "{}")":"$(jq -r ".profile.name" "{}"/Preferences)"' \
-  | fzf --with-nth=2 --delimiter=":" --query "$1" --select-1\
-  | awk -F: '{print $1}')
+    # Use find to locate directories starting with 'Profile' under the given base directory
+    # print0 will use null character as delimiter instead of spaces or line breaks
+    PROFILES=$(find "$CHROME_PROFILES_DIR" -type d \( -name "Profile*" -o -name "Default*" \) -mindepth 1 -maxdepth 1 -print0)
+    # echo -n $PROFILES \
+    #     | xargs -r -0 -I {} basename "{}"
+    # -r will skip the initial empty line, or something like that. Will avoid 1 empty result
+    # -0 will make it work with -print0
+    # -I will replace {} in the string with the current parameter
+    # will run fzf, split the string on the : character, and print the second part, which will not include :
+    # Will split in the :, and return the first part. In this case it's the profile folder we need
+    PROFILE=$(echo -n $PROFILES \
+        | xargs -r -0 -I {} bash -c 'echo "$(basename "{}")":"$(jq -r ".profile.name" "{}"/Preferences)"' \
+        | fzf --with-nth=2 --delimiter=":" --query "$1" --select-1\
+        | awk -F: '{print $1}')
 
   # if no profile selected, exit
   if [ -z "$PROFILE" ]; then
-    return
+      return
   fi
   open -n -a "Google Chrome" --args --profile-directory="$PROFILE"
 } 
@@ -221,7 +233,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '$HOME/google-cloud-sdk/path.zsh.inc' ]; then . '$HOME/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '$HOME/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/brunocangussu/google-cloud-sdk/path.zsh.inc'; fi
 
 alias vim=nvim
 
@@ -232,7 +244,13 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+if [ -z "$TMUX" ]
+then
+    tmux attach -t TMUX || tmux new -s TMUX
+fi
+
+PATH=~/.console-ninja/.bin:$PATH
