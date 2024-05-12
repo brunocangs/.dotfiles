@@ -254,3 +254,5 @@ then
 fi
 
 PATH=~/.console-ninja/.bin:$PATH
+
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
