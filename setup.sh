@@ -34,18 +34,15 @@ if [[ -z $(command -v brew) ]]; then
 fi
 
 # Setup fonts
-if [[ -z $(ls "$HOME/Library/Fonts" | grep -i power) ]]; then
-  echo "No powerline font found"
-  # clone
-  git clone https://github.com/powerline/fonts.git --depth=1
-  # install
-  cd fonts
-  ./install.sh
-  # clean-up a bit
+if [[ -z $(ls "$HOME/Library/Fonts/NerdFonts") ]]; then
+  git clone --filter=blob:none --sparse git@github.com:ryanoasis/nerd-fonts
+  cd nerd-fonts
+  git sparse-checkout add patched-fonts/Noto
+  ./install.sh Noto
   cd ..
-  rm -rf fonts
+  rm -rf nerd-fonts
 else 
-  echo "Powerline fonts installed, skipping..."
+  echo "NerdFonts installed, skipping..."
 fi
 
 # Setup ASDF
@@ -67,7 +64,7 @@ fi
 
 # Install all brew applications from Brewfile backup
 # Stow folders and apply all configs
-STOW_FOLDERS="nvim tmux zsh"
+STOW_FOLDERS="nvim tmux zsh docker"
 for folder in $STOW_FOLDERS
 do
   echo "Stowing $folder"

@@ -148,7 +148,7 @@ vp () {
 }
 
 dcup () {
-    selected=$(find ~/ProjectsDocker -mindepth 1 -maxdepth 1 -not \( -name volumes -o -name \.git \) -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    selected=$(find -L ~/ProjectsDocker -mindepth 1 -maxdepth 1 -not \( -name volumes -o -name \.git \) -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
     [[ -z $selected ]] && return
     cd $selected
     docker-compose up
