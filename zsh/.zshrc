@@ -1,4 +1,5 @@
 #!/bin/bash
+eval "$(fzf --zsh)"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
 # If you come from bash you might have to change your $PATH.

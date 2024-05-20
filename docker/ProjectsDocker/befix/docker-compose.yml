@@ -1,0 +1,13 @@
+# mySQL and valkey
+#
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: befix
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+    ports:
+      - 3306:3306
+    volumes:
+      - ../volumes/befix/sql:/var/lib/mysql
