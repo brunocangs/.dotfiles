@@ -2,6 +2,9 @@
 eval "$(fzf --zsh)"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
+export HISTIGNORE='doppler*'
+export HISTORY_IGNORE='doppler'
+
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/.mint/bin
 
@@ -13,12 +16,6 @@ export ZSH="$HOME/.oh-my-zsh"
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="agnoster"
-
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -81,6 +78,8 @@ HIST_STAMPS="dd/mm/yyyy"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
+
+FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -165,17 +164,6 @@ docs() {
     open $selected
 }
 
-llm() {
-    ollama run mistral
-}
-
-# vimdiff() {
-#     [[ $# -lt 1 ]] && echo "Usage: vimdiff <branch>" && return
-#     for file in $(git diff --name-only $1); do
-#         nvim -c "Gdiffsplit $1" $file;
-#     done
-# }
-
 alias ggraph="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all"
 # Set the base directory for Chrome profiles
 CHROME_PROFILES_DIR=~/Library/Application\ Support/Google/Chrome
@@ -205,6 +193,13 @@ chrome() {
   open -n -a "Google Chrome" --args --profile-directory="$PROFILE"
 } 
 
+db() {
+    if [[ -n $TMUX ]]; then
+      tmux rename-window db;
+    fi
+    nvim -c DBUI;
+}
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -230,6 +225,7 @@ chrome() {
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
 export DEFAULT_USER="$(whoami)"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -258,3 +254,14 @@ fi
 PATH=~/.console-ninja/.bin:$PATH
 
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+
+# Herd injected PHP 8.3 configuration.
+export HERD_PHP_83_INI_SCAN_DIR="/Users/brunocangussu/Library/Application Support/Herd/config/php/83/"
+
+
+# Herd injected PHP binary.
+export PATH="/Users/brunocangussu/Library/Application Support/Herd/bin/":$PATH
+
+# bun completions
+[ -s "/Users/brunocangussu/.bun/_bun" ] && source "/Users/brunocangussu/.bun/_bun"
