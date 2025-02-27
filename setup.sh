@@ -21,7 +21,7 @@ else
   echo "oh my zsh already installed"
 fi
 
-Install and setup Homebrew
+# Install and setup Homebrew
 if [[ -n $(command -v brew) ]]; then
   echo "Brew already installed"
 else
