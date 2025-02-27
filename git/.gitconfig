@@ -1,0 +1,11 @@
+[mergetool]
+  keepbackup = false
+[mergetool "fugitive"]
+  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+[merge]
+  tool = fugitive
+[user]
+  name = Bruno Cangussu
+  email = bruno.cangussu@hotmail.com
+[pull]
+  rebase = false

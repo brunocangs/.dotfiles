@@ -1,0 +1,2 @@
+2025/02/18 16:13:32 [error] 222#222: *207 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.4, server: paulo.spaceshipsolutions.com.br, request: "GET / HTTP/1.1", upstream: "http://192.168.0.22:3000/", host: "paulo.spaceshipsolutions.com.br"
+2025/02/18 16:14:33 [error] 222#222: *207 connect() failed (111: Connection refused) while connecting to upstream, client: 172.22.0.4, server: paulo.spaceshipsolutions.com.br, request: "GET / HTTP/1.1", upstream: "http://192.168.0.22:3000/", host: "paulo.spaceshipsolutions.com.br"

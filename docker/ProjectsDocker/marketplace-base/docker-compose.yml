@@ -1,21 +1,26 @@
-# mySQL and valkey
-#
+name: marketplace
 services:
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_DATABASE: marketplace
-      MYSQL_ALLOW_EMPTY_PASSWORD: true
-    ports:
-      - 3306:3306
-    volumes:
-      - ../volumes/marketplace/sql:/var/lib/mysql
-  valkey:
-    image: bitnami/valkey
-    environment:
-      ALLOW_EMPTY_PASSWORD: true
-    ports:
-      - "6379:6379"
-    volumes:
-      - ../volumes/marketplace/valkey:/bitnami/valkey/data
+    db:
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_DATABASE: marketplace
+            MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+            - 3306:3306
+        volumes:
+            - ../volumes/marketplace/sql:/var/lib/mysql
+    valkey:
+        image: bitnami/valkey
+        environment:
+            ALLOW_EMPTY_PASSWORD: true
+        ports:
+            - 6379:6379
+        volumes:
+            - ../volumes/marketplace/valkey:/bitnami/valkey/data
+    redisinsight:
+        container_name: redisinsight
+        ports:
+            - 5540:5540
+        image: redis/redisinsight:latest
+        # command: -v redisinsight:/data

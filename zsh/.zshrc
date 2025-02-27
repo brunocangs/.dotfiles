@@ -2,11 +2,16 @@
 eval "$(fzf --zsh)"
 eval "$(/opt/homebrew/bin/brew shellenv)"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export HISTIGNORE='doppler*'
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
 export HISTORY_IGNORE='doppler'
 
 # If you come from bash you might have to change your $PATH.
 export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/.mint/bin
+[ -n "$(go env GOBIN)" ] && export PATH="$(go env GOBIN):${PATH}"
+[ -n "$(go env GOPATH)" ] && export PATH="$(go env GOPATH)/bin:${PATH}"
+[ -n "$(go env GOROOT)" ] && export PATH="$(go env GOROOT)/bin:${PATH}"
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -104,6 +109,10 @@ pm() {
     $MANAGER "$@"
 }
 
+dpmake() {
+  doppler run --mount .env -- make $@
+}
+
 dpm() {
     cd $(git rev-parse --show-toplevel) &> /dev/null
     MANAGER="pnpm"
@@ -135,13 +144,13 @@ v () {
 }
 
 cdp () {
-    selected=$(find ~/Projects ~/Study -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    selected=$(find ~/Projects -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
     [[ -z $selected ]] && return
     cd $selected
 }
 
 vp () {
-    selected=$(find ~/Projects ~/Study -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
+    selected=$(find ~/Projects -mindepth 1 -maxdepth 1 -type d | fzf --preview 'ls {}' --query "$1" --print0 --select-1)
     [[ -z $selected ]] && return
     cd $selected
     nvim .
@@ -253,7 +262,7 @@ fi
 
 PATH=~/.console-ninja/.bin:$PATH
 
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
+# . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 
 # Herd injected PHP 8.3 configuration.
@@ -265,3 +274,8 @@ export PATH="/Users/brunocangussu/Library/Application Support/Herd/bin/":$PATH
 
 # bun completions
 [ -s "/Users/brunocangussu/.bun/_bun" ] && source "/Users/brunocangussu/.bun/_bun"
+# asdf
+# append completions to fpath
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+# initialise completions with ZSH's compinit
+autoload -Uz compinit && compinit

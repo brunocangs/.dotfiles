@@ -64,7 +64,7 @@ fi
 
 # Install all brew applications from Brewfile backup
 # Stow folders and apply all configs
-STOW_FOLDERS="nvim tmux zsh docker"
+STOW_FOLDERS="nvim tmux zsh docker git"
 for folder in $STOW_FOLDERS
 do
   echo "Stowing $folder"
